@@ -1,0 +1,13 @@
+我们知道组件的生命周期为：
+挂载阶段：
+
+constructor()
+componentWillMount()
+render()
+componentDidMount()
+更新阶段为：
+componentWillReceiveProps()
+shouldComponentUpdate()
+componentWillUpdate()
+render()
+componentDidUpdate
