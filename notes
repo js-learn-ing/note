@@ -1,13 +1,32 @@
-我们知道组件的生命周期为：
-挂载阶段：
+class Todo extends React.Component {
 
-constructor()
-componentWillMount()
-render()
-componentDidMount()
-更新阶段为：
-componentWillReceiveProps()
-shouldComponentUpdate()
-componentWillUpdate()
-render()
-componentDidUpdate
+    componentDidMount() {
+        setInterval(() => {
+            this.setState(() => {
+                console.log('setting state');
+                return { unseen: "does not display" }
+            });
+        }, 1000);
+    }
+
+    render() {
+        console.log('render called');
+        return (<div>...</div>);
+    }
+}
+shouldComponentUpdate方法默认返回true，这就是导致每次更新都重新渲染的原因。但是你可以在需要优化性能时重写这个方法来让React更智能。比起让React每次都重新渲染，你可以告诉React你什么时候不像触发重新渲染。
+
+当React将要渲染组件时他会执行shouldComponentUpdate方法来看它是否返回true（组件应该更新，也就是重新渲染）。所以你需要重写shouldComponentUpdate方法让它根据情况返回true或者false来告诉React什么时候重新渲染什么时候跳过重新渲染。
+
+当你使用shouldComponentUpdate方法你需要考虑哪些数据对与重新渲染重要。让我们回到这个例子。
+
+正如你所看到的，我们只想在title和done属性改变的时候重新渲染Todo。我们不关心unseen是否改变，所以我没有把它包含在shouldComponentUpdate方法中。
+
+当React渲染Todo组件（通过setState触发）他会首先检查状态是否改变（通过props和state）。假设状态改变了（因为我们显式地调用了setState所以这会发生）React会检查Todo的shouldComponentUpdate方法。React会根据shouldComponentUpdate方法返回值为true或者false来决定从哪里渲染。
+
+重要提示
+
+当子组件的的state变化时, 返回false并不能阻止它们重渲染。
+
+
+这作用于子组件的状态而不是他们的props。所以如果一个子组件内部管理了一些他自己的状态（使用他自己的setState），这仍然会更新。但是如果父组件的shouldComponentUpdate方法返回了false就不会传递更新后的props给他的子组件，所以子组件不会重渲染，即使他们的props变化了。
